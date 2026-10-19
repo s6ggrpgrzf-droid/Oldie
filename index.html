@@ -131,6 +131,14 @@
   }
   .tv-glass::after{content:""; position:absolute; inset:0;
     background:repeating-linear-gradient(180deg, rgba(255,255,255,.045) 0 1px, transparent 1px 4px);}
+  /* degauss: the rainbow shimmer-wobble a CRT does on power-up */
+  .tv-view.degauss{animation:degaussWobble .7s ease-out;}
+  @keyframes degaussWobble{
+    0%{transform:scale(1.035); filter:hue-rotate(85deg) saturate(1.7) brightness(1.25);}
+    35%{transform:scale(1.015) skewX(-.8deg); filter:hue-rotate(-35deg) saturate(1.35) brightness(1.1);}
+    70%{transform:scale(1.005); filter:hue-rotate(12deg) saturate(1.1);}
+    100%{transform:scale(1); filter:none;}
+  }
   /* warm-up bloom: the tube doesn't snap on, it blooms from dark */
   .tv-picture.warming{animation:warmBloom 1.05s ease-out;}
   @keyframes warmBloom{
@@ -246,6 +254,7 @@
     .tv-picture.crt-off,.tv-picture.crt-on{animation-duration:.01s;}
     .tv-picture.tuning{animation:none;}
     .tv-picture.warming{animation:none;}
+    .tv-view.degauss{animation:none;}
     .tv-humbar{animation:none;}
     video.film{animation:none;}
     .knob .ptr{transition:none;}

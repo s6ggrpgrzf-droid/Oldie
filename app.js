@@ -166,6 +166,18 @@
     o.connect(g); g.connect(a.destination);
     o.start(); o.stop(a.currentTime + 0.22);
   }
+  function degaussSound() {
+    // the soft "bwoing" of a degaussing coil: low sweep, gentle decay
+    var a = ac(); if (!a) return;
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = "sine";
+    o.frequency.setValueAtTime(95, a.currentTime);
+    o.frequency.exponentialRampToValueAtTime(32, a.currentTime + 0.55);
+    g.gain.setValueAtTime(0.16, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + 0.6);
+    o.connect(g); g.connect(a.destination);
+    o.start(); o.stop(a.currentTime + 0.65);
+  }
 
   /* ---------- channel knob ---------- */
   chKnob.addEventListener("click", function () {
@@ -248,6 +260,10 @@
       powerOn = false;
     } else {
       pic.classList.remove("crt-off"); pic.classList.add("crt-on");
+      // degauss: the coil fires as the tube wakes — shimmer + soft bwoing
+      tvView.classList.add("degauss");
+      degaussSound();
+      setTimeout(function(){ tvView.classList.remove("degauss"); }, 750);
       pow.classList.add("on"); pow.classList.remove("off");
       powerOn = true;
       setTimeout(function () {
