@@ -115,11 +115,6 @@
   }
   .tv-glass::after{content:""; position:absolute; inset:0;
     background:repeating-linear-gradient(180deg, rgba(255,255,255,.045) 0 1px, transparent 1px 4px);}
-  .tv-hint{position:absolute; inset:0; z-index:5; display:flex; align-items:center; justify-content:center;
-    text-align:center; padding:24px; pointer-events:none;
-    color:var(--amber2); font-family:Georgia,serif; font-style:italic; font-size:17px; line-height:1.7;
-    text-shadow:0 2px 12px rgba(0,0,0,.9);}
-  .tv-hint[hidden]{display:none;}
   /* the tuning roll: losing vertical hold for a beat on channel change */
   .tv-picture.tuning{animation:tuneRoll .55s cubic-bezier(.3,.7,.4,1);}
   @keyframes tuneRoll{
@@ -236,7 +231,6 @@
                     <div class="tv-scanlines" aria-hidden="true"></div>
                   </div>
                   <div class="tv-glass" aria-hidden="true"></div>
-                  <div class="tv-hint" id="tvHint">Turn the channel knob…<br>you never know what you'll get.</div>
                 </div>
               </div>
             </div>

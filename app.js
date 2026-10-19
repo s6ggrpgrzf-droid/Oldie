@@ -6,7 +6,7 @@
   "use strict";
 
   var $ = function (id) { return document.getElementById(id); };
-  var player = $("player"), tvView = $("tvView"), tvHint = $("tvHint"),
+  var player = $("player"), tvView = $("tvView"),
       pic = $("tvPicture"), chKnob = $("knobCh"), volKnob = $("knobVol"),
       chPtr = $("chPtr"), volPtr = $("volPtr"), chNum = $("chNum"),
       pow = $("btnPower"), sCan = $("staticCanvas");
@@ -76,7 +76,6 @@
     curReel = id;
     curCh = 2 + Math.floor(Math.random() * 12);
     rollChannel(curCh);
-    tvHint.hidden = true;
     setNoise("static");   // snow until the picture locks in
     player.classList.remove("film");
     // the tuning roll: vertical hold wobbles, then catches
@@ -203,7 +202,6 @@
       player.pause();
       setNoise("off");
       player.classList.remove("film");
-      tvHint.hidden = true;
       document.body.classList.remove("watching");
       pic.classList.remove("crt-on"); pic.classList.add("crt-off");
       pow.classList.remove("on"); pow.classList.add("off");
@@ -219,7 +217,6 @@
           try { var pr = player.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
         } else {
           setNoise("static");
-          tvHint.hidden = false;
         }
       }, 400);
     }
