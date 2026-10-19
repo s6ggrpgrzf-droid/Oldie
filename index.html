@@ -44,6 +44,8 @@
   .tv-scene::after{content:""; display:block; height:70px; margin:-6px 60px 0;
     background:radial-gradient(52% 100% at 50% 0, rgba(255,178,102,.14), rgba(255,178,102,0) 70%);}
   main{width:100%; max-width:1120px; margin:0 auto; padding:10px 14px 30px; flex:1; display:flex; align-items:center;}
+  /* the screen as a light source: warm halo when the picture is on.
+     The glow shadow is present (transparent) in both states so it cross-fades. */
   .tv-cabinet{position:relative; transform:rotateX(7deg) rotateY(7deg); transform-origin:50% 100%;
     border-radius:14px; padding:0;
     background:
@@ -52,6 +54,14 @@
       repeating-linear-gradient(89deg, transparent 0 90px, rgba(0,0,0,.13) 90px 93px, transparent 93px 190px),
       linear-gradient(180deg,#4e3018 0%,#3a2210 45%,#221306 100%);
     box-shadow:0 44px 90px rgba(0,0,0,.65), 0 10px 26px rgba(0,0,0,.5),
+      0 0 110px 24px rgba(255,196,130,0),
+      inset 0 3px 0 rgba(255,230,190,.30), inset 0 -6px 14px rgba(0,0,0,.55),
+      inset 3px 0 0 rgba(255,220,170,.10), inset -3px 0 0 rgba(0,0,0,.45);
+    transition:box-shadow 1.6s ease;
+  }
+  body.watching .tv-cabinet{
+    box-shadow:0 44px 90px rgba(0,0,0,.65), 0 10px 26px rgba(0,0,0,.5),
+      0 0 110px 24px rgba(255,196,130,.20),
       inset 0 3px 0 rgba(255,230,190,.30), inset 0 -6px 14px rgba(0,0,0,.55),
       inset 3px 0 0 rgba(255,220,170,.10), inset -3px 0 0 rgba(0,0,0,.45);
   }
