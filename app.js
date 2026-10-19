@@ -212,6 +212,9 @@
       powerOn = true;
       setTimeout(function () {
         if (!powerOn) return;
+        // the tube warms up: picture blooms from dark
+        pic.classList.add("warming");
+        setTimeout(function(){ pic.classList.remove("warming"); }, 1150);
         if (player.src) {
           setNoise("static");
           try { var pr = player.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}

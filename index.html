@@ -125,6 +125,13 @@
   }
   .tv-glass::after{content:""; position:absolute; inset:0;
     background:repeating-linear-gradient(180deg, rgba(255,255,255,.045) 0 1px, transparent 1px 4px);}
+  /* warm-up bloom: the tube doesn't snap on, it blooms from dark */
+  .tv-picture.warming{animation:warmBloom 1.05s ease-out;}
+  @keyframes warmBloom{
+    0%{filter:brightness(.12);}
+    55%{filter:brightness(.62);}
+    100%{filter:brightness(1);}
+  }
   /* the tuning roll: losing vertical hold for a beat on channel change */
   .tv-picture.tuning{animation:tuneRoll .55s cubic-bezier(.3,.7,.4,1);}
   @keyframes tuneRoll{
@@ -217,6 +224,7 @@
   @media (prefers-reduced-motion:reduce){
     .tv-picture.crt-off,.tv-picture.crt-on{animation-duration:.01s;}
     .tv-picture.tuning{animation:none;}
+    .tv-picture.warming{animation:none;}
     video.film{animation:none;}
     .knob .ptr{transition:none;}
   }
