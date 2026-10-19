@@ -297,6 +297,20 @@
     .then(function (d) { reels = d.reels || []; })
     .catch(function () { reels = []; });
 
+  /* ---------- fullscreen: the TV screen fills the display ---------- */
+  $("btnFs").addEventListener("click", function () {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else if (tvView.requestFullscreen) {
+      tvView.requestFullscreen();
+    } else if (tvView.webkitRequestFullscreen) {
+      tvView.webkitRequestFullscreen();
+    } else if (player.webkitEnterFullscreen) {
+      // iOS Safari: fullscreen the video itself
+      player.webkitEnterFullscreen();
+    }
+  });
+
   // Expose a sliver for smoke tests.
   window.__oldie = {
     get reels() { return reels; },

@@ -272,6 +272,11 @@
     .knob .ptr{transition:none;}
   }
   footer{padding:0 16px 34px; color:var(--muted); font-size:12px; text-align:center; line-height:1.9;}
+  .fs-btn{display:block; margin:20px auto 0; padding:9px 22px; cursor:pointer;
+    background:rgba(216,180,90,.10); border:1px solid rgba(216,180,90,.32); border-radius:999px;
+    color:#d8b45a; font-size:12.5px; letter-spacing:1.5px; font-family:inherit;
+    transition:background .2s ease, border-color .2s ease;}
+  .fs-btn:hover{background:rgba(216,180,90,.20); border-color:rgba(216,180,90,.5);}
   [hidden]{display:none !important;}
 </style>
 </head>
@@ -326,6 +331,8 @@
     </div>
   </div>
 </main>
+
+<button class="fs-btn" id="btnFs" aria-label="Full screen">⛶ Full screen</button>
 
 <footer>
   Commercials stream free from the Internet Archive's Prelinger Archive — public-domain films, free to reuse.<br>
