@@ -50,7 +50,19 @@
     border-radius:14px; padding:0;
     background:
       linear-gradient(180deg, rgba(255,214,160,.09), rgba(255,214,160,0) 26%),
+      /* knots: dark swirls where the grain turns */
+      radial-gradient(ellipse 30px 44px at 16% 30%, rgba(18,9,4,.32), transparent 70%),
+      radial-gradient(ellipse 24px 36px at 74% 66%, rgba(18,9,4,.28), transparent 70%),
+      radial-gradient(ellipse 19px 28px at 44% 84%, rgba(18,9,4,.26), transparent 70%),
+      /* color mottling: warm and cool patches in the walnut */
+      radial-gradient(ellipse 320px 190px at 28% 18%, rgba(125,72,36,.10), transparent 70%),
+      radial-gradient(ellipse 280px 210px at 76% 78%, rgba(28,15,7,.13), transparent 70%),
+      /* fine grain */
       repeating-linear-gradient(92deg, rgba(12,6,2,.17) 0 2px, rgba(255,200,140,.05) 2px 4px, transparent 4px 13px),
+      /* mineral streaks at a wandering angle */
+      repeating-linear-gradient(87deg, transparent 0 34px, rgba(0,0,0,.07) 34px 35px, transparent 35px 71px),
+      repeating-linear-gradient(94deg, transparent 0 52px, rgba(62,32,13,.09) 52px 54px, transparent 54px 103px),
+      /* plank separations */
       repeating-linear-gradient(89deg, transparent 0 90px, rgba(0,0,0,.13) 90px 93px, transparent 93px 190px),
       linear-gradient(180deg,#4e3018 0%,#3a2210 45%,#221306 100%);
     box-shadow:0 44px 90px rgba(0,0,0,.65), 0 10px 26px rgba(0,0,0,.5),
