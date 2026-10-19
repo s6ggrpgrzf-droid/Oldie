@@ -7,9 +7,9 @@
 
   var $ = function (id) { return document.getElementById(id); };
   var player = $("player"), tvView = $("tvView"), tvHint = $("tvHint"),
-      tube = $("tvTube"), chKnob = $("knobCh"), volKnob = $("knobVol"),
+      pic = $("tvPicture"), chKnob = $("knobCh"), volKnob = $("knobVol"),
       chPtr = $("chPtr"), volPtr = $("volPtr"), chNum = $("chNum"),
-      pow = $("btnPower");
+      pow = $("btnPower"), sCan = $("staticCanvas");
 
   var reels = [];            // archive.org identifiers, from reels.json
   var curReel = null;        // identifier currently playing
@@ -17,6 +17,30 @@
   var chAngle = 0;
   var powerOn = true;
   var skipGuard = 0;         // caps consecutive error-skips
+
+  /* ---------- TV static: the snow an idle set shows ---------- */
+  var sCtx = sCan.getContext("2d");
+  var staticTimer = 0, staticOn = false;
+  var reducedMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function drawStatic() {
+    var img = sCtx.createImageData(160, 90), d = img.data;
+    for (var i = 0; i < d.length; i += 4) {
+      var v = (Math.random() * 255) | 0;
+      d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+    }
+    sCtx.putImageData(img, 0, 0);
+  }
+  function setStatic(on) {
+    if (on === staticOn) return;
+    staticOn = on;
+    sCan.style.display = on ? "block" : "none";
+    if (staticTimer) { clearInterval(staticTimer); staticTimer = 0; }
+    if (on) {
+      drawStatic();
+      if (!reducedMotion) staticTimer = setInterval(drawStatic, 90);
+    }
+  }
 
   function reelUrl(id) {
     return "https://archive.org/download/" + id + "/" + id + ".mp4";
@@ -40,6 +64,7 @@
     curCh = 2 + Math.floor(Math.random() * 12);
     chNum.textContent = String(curCh);
     tvHint.hidden = true;
+    setStatic(true);   // snow until the picture locks in
     player.src = reelUrl(id);
     try {
       var pr = player.play();
@@ -61,6 +86,10 @@
     if (!player.src || !powerOn) return;
     if (skipGuard++ > 6) { skipGuard = 0; return; }  // don't spin forever
     surprise();
+  });
+  player.addEventListener("playing", function () {
+    skipGuard = 0;
+    setStatic(false);   // picture locked in — snow out
   });
   player.addEventListener("ended", function () {
     skipGuard = 0;
@@ -143,19 +172,32 @@
   });
   player.addEventListener("volumechange", paintVol);
 
-  /* ---------- power: the full CRT collapse ---------- */
+  /* ---------- power: only the picture collapses; the glass stays ----------
+     Off: picture -> bright line -> dot -> dark glass (the set remains).
+     On:  dot -> line -> full picture, snow until a channel is chosen. */
   pow.addEventListener("click", function () {
     thunk();
     if (powerOn) {
       player.pause();
-      tube.classList.remove("crt-on"); tube.classList.add("crt-off");
+      setStatic(false);
+      tvHint.hidden = true;
+      pic.classList.remove("crt-on"); pic.classList.add("crt-off");
       pow.classList.remove("on"); pow.classList.add("off");
       powerOn = false;
     } else {
-      tube.classList.remove("crt-off"); tube.classList.add("crt-on");
+      pic.classList.remove("crt-off"); pic.classList.add("crt-on");
       pow.classList.add("on"); pow.classList.remove("off");
       powerOn = true;
-      surprise();
+      setTimeout(function () {
+        if (!powerOn) return;
+        if (player.src) {
+          setStatic(true);
+          try { var pr = player.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
+        } else {
+          setStatic(true);
+          tvHint.hidden = false;
+        }
+      }, 400);
     }
   });
 
@@ -168,7 +210,8 @@
     else if (k === "c") chKnob.click();
   });
 
-  /* ---------- init ---------- */
+  /* ---------- init: the set is on, tuned to nothing — snow ---------- */
+  setStatic(true);
   fetch("reels.json")
     .then(function (r) { if (!r.ok) throw 0; return r.json(); })
     .then(function (d) { reels = d.reels || []; })
