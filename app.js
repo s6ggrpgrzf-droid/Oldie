@@ -8,7 +8,9 @@
   var $ = function (id) { return document.getElementById(id); };
   var player = $("player"), tvView = $("tvView"),
       pic = $("tvPicture"), chKnob = $("knobCh"), volKnob = $("knobVol"),
-      chPtr = $("chPtr"), volPtr = $("volPtr"), chNum = $("chNum"),
+      fineKnob = $("knobFine"),
+      chPtr = $("chPtr"), volPtr = $("volPtr"), finePtr = $("finePtr"),
+      chNum = $("chNum"),
       pow = $("btnPower"), sCan = $("staticCanvas"), humBar = $("humBar");
 
   var reels = [];            // archive.org identifiers, from reels.json
@@ -17,6 +19,17 @@
   var chAngle = 0;
   var powerOn = true;
   var skipGuard = 0;         // caps consecutive error-skips
+
+  /* ---------- fine tuning: dial the picture from snowy to locked in ---------- */
+  var tuneLevel = 0.65;   // 0 = snowstorm, 1 = crystal
+  function grainOpacity() { return 0.30 - tuneLevel * 0.285; }
+  function paintFine() {
+    finePtr.style.transform = "rotate(" + (-135 + tuneLevel * 270) + "deg)";
+  }
+  function applyTune() {
+    paintFine();
+    if (noiseMode === "grain") sCan.style.opacity = String(grainOpacity());
+  }
 
   /* ---------- film noise: loud static when idle, faint grain when playing ---------- */
   var sCtx = sCan.getContext("2d");
@@ -38,7 +51,7 @@
     humBar.style.display = mode === "static" ? "block" : "none";
     if (mode === "off") { sCan.style.display = "none"; return; }
     sCan.style.display = "block";
-    sCan.style.opacity = mode === "static" ? "1" : ".07";
+    sCan.style.opacity = mode === "static" ? "1" : String(grainOpacity());
     drawStatic();
     if (!reducedMotion) staticTimer = setInterval(drawStatic, mode === "static" ? 90 : 140);
   }
@@ -193,6 +206,32 @@
     volKnob.addEventListener("pointercancel", up);
   });
   player.addEventListener("volumechange", paintVol);
+
+  /* ---------- fine-tune knob: drag vertically to clear the picture ---------- */
+  paintFine();
+  fineKnob.addEventListener("pointerdown", function (e) {
+    try { fineKnob.setPointerCapture(e.pointerId); } catch (err) {}
+    var y0 = e.clientY, t0 = tuneLevel, moved = 0;
+    blip(700, 0.04, "sine", 0.03);
+    function mv(ev) {
+      moved = Math.max(moved, Math.abs(ev.clientY - y0));
+      tuneLevel = Math.min(1, Math.max(0, t0 + (y0 - ev.clientY) / 150));
+      applyTune();
+    }
+    function up() {
+      fineKnob.removeEventListener("pointermove", mv);
+      fineKnob.removeEventListener("pointerup", up);
+      fineKnob.removeEventListener("pointercancel", up);
+      if (moved < 8) {   // tap = nudge clearer (wraps to snowy at the top)
+        tuneLevel = tuneLevel >= 1 ? 0 : Math.min(1, tuneLevel + 0.2);
+        applyTune();
+        blip(850, 0.05, "sine", 0.04);
+      }
+    }
+    fineKnob.addEventListener("pointermove", mv);
+    fineKnob.addEventListener("pointerup", up);
+    fineKnob.addEventListener("pointercancel", up);
+  });
 
   /* ---------- power: only the picture collapses; the glass stays ----------
      Off: picture -> bright line -> dot -> dark glass (the set remains).

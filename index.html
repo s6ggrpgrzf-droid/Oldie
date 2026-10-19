@@ -172,6 +172,11 @@
   .knob-row{display:flex; gap:18px;}
   .knob-unit{display:flex; flex-direction:column; align-items:center; gap:7px;}
   .knob-unit label{font-size:9.5px; letter-spacing:2.5px; text-transform:uppercase; color:#9a8a76; font-weight:700;}
+  .knob.fine{width:44px; height:44px;}
+  .knob.fine .ptr::before{top:5px; height:11px; width:4px; margin-left:-2px;}
+  .knob.fine .ptr::after{inset:6px;}
+  .fine-unit{margin-top:-4px;}
+  .fine-unit label{font-size:8.5px;}
   .knob{width:62px; height:62px; border-radius:50%; border:none; cursor:pointer; position:relative; padding:0;
     background:radial-gradient(circle at 34% 28%, #77777f, #3d3d45 52%, #1a1a1f 100%);
     box-shadow:0 5px 12px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.28), inset 0 -4px 8px rgba(0,0,0,.65);
@@ -220,11 +225,21 @@
   @media (max-width:640px){
     .tv-mains{flex-direction:column;}
     .tv-side{flex:none;}
-    .tv-panel{flex-direction:row; justify-content:space-around; align-items:center; padding:12px 10px;}
-    .knob-row{gap:14px;}
+    .tv-panel{flex-direction:row; justify-content:space-between; align-items:center; padding:10px 8px; gap:8px;}
+    .ch-win{min-width:44px; padding:5px 10px 4px; font-size:18px; letter-spacing:2px;}
+    .knob-row{gap:10px;}
     .tv-grille{min-height:74px;}
-    .knob{width:54px; height:54px;}
-    .power{padding:8px 11px; font-size:9px; letter-spacing:1.5px; gap:7px; flex:none;}
+    .knob{width:48px; height:48px;}
+    .knob .ptr::before{top:6px; height:14px;}
+    .knob .ptr::after{inset:8px;}
+    .knob.fine{width:32px; height:32px;}
+    .knob.fine .ptr::before{top:4px; height:8px; width:3px; margin-left:-1.5px;}
+    .knob.fine .ptr::after{inset:5px;}
+    .fine-unit{margin-top:0;}
+    .fine-unit label{display:none;}
+    .knob-unit label{font-size:8px; letter-spacing:1.5px;}
+    .power{padding:6px 8px; font-size:8px; letter-spacing:1px; gap:5px; flex:none;}
+    .power .led{width:7px; height:7px;}
     .tv-front{padding:22px 16px 16px;}
   }
   @media (prefers-reduced-motion:reduce){
@@ -273,6 +288,10 @@
                     <button class="knob" id="knobVol" aria-label="Volume (drag or tap to mute)"><span class="ptr" id="volPtr"></span></button>
                     <label>Volume</label>
                   </div>
+                </div>
+                <div class="knob-unit fine-unit">
+                  <button class="knob fine" id="knobFine" aria-label="Fine tune (drag)"><span class="ptr" id="finePtr"></span></button>
+                  <label>Fine tune</label>
                 </div>
                 <button class="power on" id="btnPower" aria-label="Power"><span class="led"></span>Power</button>
               </div>
