@@ -40,11 +40,11 @@
   .player-wrap{width:100%;}
 
   /* ============ 70s wooden console TV ============ */
-  .tv-scene{perspective:1500px; padding:30px 14px 6px; width:100%;}
+  .tv-scene{perspective:1200px; padding:30px 14px 6px; width:100%;}
   .tv-scene::after{content:""; display:block; height:70px; margin:-6px 60px 0;
     background:radial-gradient(52% 100% at 50% 0, rgba(255,178,102,.14), rgba(255,178,102,0) 70%);}
   main{width:100%; max-width:1120px; margin:0 auto; padding:10px 14px 30px; flex:1; display:flex; align-items:center;}
-  .tv-cabinet{position:relative; transform:rotateX(6deg); transform-origin:50% 100%;
+  .tv-cabinet{position:relative; transform:rotateX(7deg) rotateY(7deg); transform-origin:50% 100%;
     border-radius:14px; padding:0;
     background:
       linear-gradient(180deg, rgba(255,214,160,.09), rgba(255,214,160,0) 26%),
@@ -52,14 +52,21 @@
       repeating-linear-gradient(89deg, transparent 0 90px, rgba(0,0,0,.13) 90px 93px, transparent 93px 190px),
       linear-gradient(180deg,#4e3018 0%,#3a2210 45%,#221306 100%);
     box-shadow:0 44px 90px rgba(0,0,0,.65), 0 10px 26px rgba(0,0,0,.5),
-      inset 0 2px 0 rgba(255,220,170,.22), inset 0 -4px 10px rgba(0,0,0,.5),
-      inset 2px 0 0 rgba(255,220,170,.08), inset -2px 0 0 rgba(0,0,0,.4);
+      inset 0 3px 0 rgba(255,230,190,.30), inset 0 -6px 14px rgba(0,0,0,.55),
+      inset 3px 0 0 rgba(255,220,170,.10), inset -3px 0 0 rgba(0,0,0,.45);
   }
-  .tv-lid{position:absolute; left:10px; right:10px; top:1px; height:46px; z-index:0;
-    transform:rotateX(64deg); transform-origin:50% 0;
-    background:linear-gradient(180deg,#5c3b21 0%,#3d2410 100%);
+  /* the side turning away falls into shadow */
+  .tv-cabinet::before{content:""; position:absolute; inset:0; border-radius:14px;
+    pointer-events:none; z-index:5;
+    background:linear-gradient(90deg, rgba(0,0,0,.42), transparent 22%);
+  }
+  .tv-lid{position:absolute; left:10px; right:10px; top:1px; height:96px; z-index:0;
+    transform:rotateX(52deg); transform-origin:50% 0;
+    background:
+      repeating-linear-gradient(2deg, rgba(12,6,2,.16) 0 2px, rgba(255,200,140,.05) 2px 4px, transparent 4px 12px),
+      linear-gradient(180deg,#5c3b21 0%,#3d2410 100%);
     border-radius:10px 10px 0 0;
-    box-shadow:inset 0 2px 0 rgba(255,226,180,.24);
+    box-shadow:inset 0 3px 0 rgba(255,226,180,.30), inset 0 -6px 12px rgba(0,0,0,.45);
   }
   .tv-front{position:relative; z-index:1; padding:30px 28px 20px;}
   .tv-mains{display:flex; gap:24px; align-items:stretch;}
@@ -72,7 +79,10 @@
       0 2px 8px rgba(0,0,0,.6);
   }
   .tv-view{position:relative; border-radius:12px; overflow:hidden; background:#000;
-    box-shadow:inset 0 0 60px rgba(0,0,0,.85); cursor:pointer; aspect-ratio:16/9;
+    /* glass set back into the cabinet: deep inner frame shadow */
+    box-shadow:inset 0 0 0 3px rgba(0,0,0,.55), inset 0 2px 18px rgba(0,0,0,.9),
+      inset 0 0 70px rgba(0,0,0,.85);
+    cursor:pointer; aspect-ratio:16/9;
   }
   .tv-picture{position:absolute; inset:0; transform-origin:50% 50%;}
   .tv-picture video{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#000; display:block;
@@ -98,6 +108,8 @@
   }
   .tv-glass{position:absolute; inset:0; z-index:4; pointer-events:none; border-radius:12px;
     background:
+      /* diagonal room reflection sweeping across the tube */
+      linear-gradient(115deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.02) 28%, transparent 45%),
       radial-gradient(115% 85% at 20% 6%, rgba(255,255,255,.13), rgba(255,255,255,0) 44%),
       radial-gradient(145% 125% at 50% 52%, transparent 60%, rgba(0,0,0,.46) 100%);
   }
@@ -181,9 +193,12 @@
   .tv-carve::after{content:"OLDIE"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:14px; letter-spacing:9px; font-weight:800; padding-left:9px;
     color:rgba(0,0,0,.48); text-shadow:0 1px 0 rgba(255,220,170,.16);}
-  .tv-plinth{height:24px; margin:0 30px; border-radius:0 0 12px 12px;
-    background:linear-gradient(180deg,#221306,#120a03);
-    box-shadow:0 18px 34px rgba(0,0,0,.55), inset 0 2px 0 rgba(255,220,170,.10);}
+  /* tapered wooden feet — the set stands on something */
+  .tv-feet{display:flex; justify-content:space-between; margin:0 46px; height:32px;}
+  .tv-feet i{display:block; width:34px; height:32px;
+    background:linear-gradient(180deg,#2b1a0c 0%,#160c04 100%);
+    border-radius:3px 3px 9px 9px;
+    box-shadow:0 10px 18px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,220,170,.12), inset 2px 0 3px rgba(0,0,0,.4);}
   @media (max-width:640px){
     .tv-mains{flex-direction:column;}
     .tv-side{flex:none;}
@@ -245,7 +260,7 @@
           </div>
           <div class="tv-carve" aria-hidden="true"></div>
         </div>
-        <div class="tv-plinth" aria-hidden="true"></div>
+        <div class="tv-feet" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
       </div>
     </div>
   </div>
