@@ -277,6 +277,15 @@
     color:#d8b45a; font-size:12.5px; letter-spacing:1.5px; font-family:inherit;
     transition:background .2s ease, border-color .2s ease;}
   .fs-btn:hover{background:rgba(216,180,90,.20); border-color:rgba(216,180,90,.5);}
+  /* volume OSD: a whisper of a bar, then gone */
+  .tv-osd{position:absolute; left:50%; bottom:9%; transform:translateX(-50%);
+    width:38%; max-width:220px; height:5px; border-radius:3px; z-index:4;
+    background:rgba(255,255,255,.14); opacity:0; transition:opacity .3s ease;
+    pointer-events:none;}
+  .tv-osd.show{opacity:1;}
+  .tv-osd i{display:block; height:100%; border-radius:3px;
+    background:linear-gradient(90deg,#ffb347,#ffd27a);
+    box-shadow:0 0 8px rgba(255,180,90,.6); transition:width .12s ease;}
   [hidden]{display:none !important;}
 </style>
 </head>
@@ -297,6 +306,7 @@
                     <canvas id="staticCanvas" width="160" height="120" aria-hidden="true"></canvas>
                     <div class="tv-humbar" id="humBar" aria-hidden="true"></div>
                     <div class="tv-scanlines" aria-hidden="true"></div>
+                    <div class="tv-osd" id="volOsd" aria-hidden="true"><i id="volOsdBar"></i></div>
                   </div>
                   <div class="tv-glass" aria-hidden="true"></div>
                 </div>

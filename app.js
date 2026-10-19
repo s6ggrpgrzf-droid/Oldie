@@ -211,6 +211,17 @@
     volPtr.style.transform = "rotate(" + (-135 + v * 270) + "deg)";
   }
   paintVol();
+  /* volume OSD: show a whisper of a bar when the level changes */
+  var volOsd = $("volOsd"), volOsdBar = $("volOsdBar"), osdTimer = 0;
+  function showVolOsd() {
+    if (!powerOn) return;
+    var v = player.muted ? 0 : player.volume;
+    volOsdBar.style.width = Math.round(v * 100) + "%";
+    volOsd.classList.add("show");
+    if (osdTimer) clearTimeout(osdTimer);
+    osdTimer = setTimeout(function(){ volOsd.classList.remove("show"); }, 1400);
+  }
+  player.addEventListener("volumechange", showVolOsd);
   volKnob.addEventListener("pointerdown", function (e) {
     try { volKnob.setPointerCapture(e.pointerId); } catch (err) {}
     var y0 = e.clientY, v0 = player.muted ? 0 : player.volume, moved = 0;
