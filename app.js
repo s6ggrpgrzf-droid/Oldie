@@ -68,6 +68,21 @@
     return id;
   }
 
+  /* ---------- preload: the next commercial is already buffered ---------- */
+  var nextReel = null;
+  var preloader = document.createElement("video");
+  preloader.preload = "auto";
+  preloader.style.display = "none";
+  document.body.appendChild(preloader);
+  function preloadNext(exclude) {
+    if (!reels.length) return;
+    var pool = reels.filter(function (r) { return r !== exclude; });
+    if (!pool.length) pool = reels;
+    nextReel = pool[Math.floor(Math.random() * pool.length)];
+    preloader.src = reelUrl(nextReel);
+    try { preloader.load(); } catch (e) {}
+  }
+
   /* Channel digits roll like a mechanical tuner before settling. */
   function rollChannel(finalNum) {
     var steps = 6, i = 0;
@@ -85,9 +100,11 @@
      change is a surprise. Runs inside the tap gesture (iOS requirement). */
   function surprise() {
     if (!powerOn || !reels.length) return;
-    var id = pickReel();
+    // Prefer the preloaded reel so the picture locks in fast; fall back to random.
+    var id = (nextReel && nextReel !== curReel) ? nextReel : pickReel();
     if (!id) return;
     curReel = id;
+    preloadNext(id);   // buffer the one after this while it plays
     curCh = 2 + Math.floor(Math.random() * 12);
     rollChannel(curCh);
     setNoise("static");   // snow until the picture locks in
@@ -294,7 +311,7 @@
   setNoise("static");
   fetch("reels.json")
     .then(function (r) { if (!r.ok) throw 0; return r.json(); })
-    .then(function (d) { reels = d.reels || []; })
+    .then(function (d) { reels = d.reels || []; preloadNext(null); })
     .catch(function () { reels = []; });
 
   /* ---------- fullscreen: the TV screen fills the display ---------- */
