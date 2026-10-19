@@ -18,9 +18,9 @@
   var powerOn = true;
   var skipGuard = 0;         // caps consecutive error-skips
 
-  /* ---------- TV static: the snow an idle set shows ---------- */
+  /* ---------- film noise: loud static when idle, faint grain when playing ---------- */
   var sCtx = sCan.getContext("2d");
-  var staticTimer = 0, staticOn = false;
+  var staticTimer = 0, noiseMode = "off";   // off | static | grain
   var reducedMotion = window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function drawStatic() {
@@ -31,15 +31,15 @@
     }
     sCtx.putImageData(img, 0, 0);
   }
-  function setStatic(on) {
-    if (on === staticOn) return;
-    staticOn = on;
-    sCan.style.display = on ? "block" : "none";
+  function setNoise(mode) {
+    if (mode === noiseMode) return;
+    noiseMode = mode;
     if (staticTimer) { clearInterval(staticTimer); staticTimer = 0; }
-    if (on) {
-      drawStatic();
-      if (!reducedMotion) staticTimer = setInterval(drawStatic, 90);
-    }
+    if (mode === "off") { sCan.style.display = "none"; return; }
+    sCan.style.display = "block";
+    sCan.style.opacity = mode === "static" ? "1" : ".07";
+    drawStatic();
+    if (!reducedMotion) staticTimer = setInterval(drawStatic, mode === "static" ? 90 : 140);
   }
 
   function reelUrl(id) {
@@ -77,7 +77,8 @@
     curCh = 2 + Math.floor(Math.random() * 12);
     rollChannel(curCh);
     tvHint.hidden = true;
-    setStatic(true);   // snow until the picture locks in
+    setNoise("static");   // snow until the picture locks in
+    player.classList.remove("film");
     document.body.classList.remove("watching");   // room lights come up while tuning
     player.src = reelUrl(id);
     try {
@@ -103,7 +104,8 @@
   });
   player.addEventListener("playing", function () {
     skipGuard = 0;
-    setStatic(false);   // picture locked in — snow out
+    setNoise("grain");   // picture locked in — snow drops to a faint film grain
+    player.classList.add("film");   // + the occasional projector flicker
     document.body.classList.add("watching");   // lights down
   });
   player.addEventListener("ended", function () {
@@ -194,7 +196,8 @@
     thunk();
     if (powerOn) {
       player.pause();
-      setStatic(false);
+      setNoise("off");
+      player.classList.remove("film");
       tvHint.hidden = true;
       document.body.classList.remove("watching");
       pic.classList.remove("crt-on"); pic.classList.add("crt-off");
@@ -207,10 +210,10 @@
       setTimeout(function () {
         if (!powerOn) return;
         if (player.src) {
-          setStatic(true);
+          setNoise("static");
           try { var pr = player.play(); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {}
         } else {
-          setStatic(true);
+          setNoise("static");
           tvHint.hidden = false;
         }
       }, 400);
@@ -227,7 +230,7 @@
   });
 
   /* ---------- init: the set is on, tuned to nothing — snow ---------- */
-  setStatic(true);
+  setNoise("static");
   fetch("reels.json")
     .then(function (r) { if (!r.ok) throw 0; return r.json(); })
     .then(function (d) { reels = d.reels || []; })

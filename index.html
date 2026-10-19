@@ -76,7 +76,21 @@
   }
   .tv-picture{position:absolute; inset:0; transform-origin:50% 50%;}
   .tv-picture video{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#000; display:block;}
-  #staticCanvas{position:absolute; inset:0; width:100%; height:100%; display:none;}
+  #staticCanvas{position:absolute; inset:0; width:100%; height:100%; display:none; transition:opacity .35s ease;}
+  /* faint projector flicker while a reel plays — abrupt, film-like */
+  video.film{animation:filmFlicker 5s steps(1,end) infinite;}
+  @keyframes filmFlicker{
+    0%,100%{filter:brightness(1);}
+    6%{filter:brightness(1.035);}
+    7%{filter:brightness(.965);}
+    8%{filter:brightness(1);}
+    34%{filter:brightness(1.02);}
+    35%{filter:brightness(.98);}
+    36%{filter:brightness(1);}
+    68%{filter:brightness(.975);}
+    69%{filter:brightness(1.025);}
+    70%{filter:brightness(1);}
+  }
   .tv-glass{position:absolute; inset:0; z-index:4; pointer-events:none; border-radius:12px;
     background:
       radial-gradient(115% 85% at 20% 6%, rgba(255,255,255,.13), rgba(255,255,255,0) 44%),
@@ -170,6 +184,7 @@
   }
   @media (prefers-reduced-motion:reduce){
     .tv-picture.crt-off,.tv-picture.crt-on{animation-duration:.01s;}
+    video.film{animation:none;}
     .knob .ptr{transition:none;}
   }
   footer{padding:0 16px 34px; color:var(--muted); font-size:12px; text-align:center; line-height:1.9;}
