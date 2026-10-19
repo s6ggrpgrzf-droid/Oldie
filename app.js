@@ -24,7 +24,7 @@
   var reducedMotion = window.matchMedia &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function drawStatic() {
-    var img = sCtx.createImageData(160, 90), d = img.data;
+    var img = sCtx.createImageData(160, 120), d = img.data;
     for (var i = 0; i < d.length; i += 4) {
       var v = (Math.random() * 255) | 0;
       d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
