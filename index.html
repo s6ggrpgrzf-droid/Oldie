@@ -97,6 +97,12 @@
   .tv-picture{position:absolute; inset:0; transform-origin:50% 50%;}
   .tv-picture video{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#000; display:block;
     filter:sepia(.15) saturate(1.05);}
+  /* hum bar: the faint band drifting down through analog static */
+  .tv-humbar{position:absolute; left:0; right:0; height:16%; top:-16%; z-index:2;
+    pointer-events:none; display:none;
+    background:linear-gradient(180deg, transparent, rgba(255,255,255,.07) 38%, rgba(255,255,255,.07) 62%, transparent);
+    animation:humDrift 7.5s linear infinite;}
+  @keyframes humDrift{0%{top:-16%;} 100%{top:100%;}}
   #staticCanvas{position:absolute; inset:0; width:100%; height:100%; display:none; transition:opacity .35s ease;}
   /* CRT scanlines — faint, always there, over picture and static alike */
   .tv-scanlines{position:absolute; inset:0; z-index:3; pointer-events:none; border-radius:12px;
@@ -225,6 +231,7 @@
     .tv-picture.crt-off,.tv-picture.crt-on{animation-duration:.01s;}
     .tv-picture.tuning{animation:none;}
     .tv-picture.warming{animation:none;}
+    .tv-humbar{animation:none;}
     video.film{animation:none;}
     .knob .ptr{transition:none;}
   }
@@ -247,6 +254,7 @@
                   <div class="tv-picture" id="tvPicture">
                     <video id="player" playsinline preload="auto"></video>
                     <canvas id="staticCanvas" width="160" height="120" aria-hidden="true"></canvas>
+                    <div class="tv-humbar" id="humBar" aria-hidden="true"></div>
                     <div class="tv-scanlines" aria-hidden="true"></div>
                   </div>
                   <div class="tv-glass" aria-hidden="true"></div>

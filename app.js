@@ -9,7 +9,7 @@
   var player = $("player"), tvView = $("tvView"),
       pic = $("tvPicture"), chKnob = $("knobCh"), volKnob = $("knobVol"),
       chPtr = $("chPtr"), volPtr = $("volPtr"), chNum = $("chNum"),
-      pow = $("btnPower"), sCan = $("staticCanvas");
+      pow = $("btnPower"), sCan = $("staticCanvas"), humBar = $("humBar");
 
   var reels = [];            // archive.org identifiers, from reels.json
   var curReel = null;        // identifier currently playing
@@ -26,7 +26,7 @@
   function drawStatic() {
     var img = sCtx.createImageData(160, 120), d = img.data;
     for (var i = 0; i < d.length; i += 4) {
-      var v = (Math.random() * 255) | 0;
+      var v = 60 + ((Math.random() * 140) | 0);   // softer: gray, not harsh b/w
       d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
     }
     sCtx.putImageData(img, 0, 0);
@@ -35,6 +35,7 @@
     if (mode === noiseMode) return;
     noiseMode = mode;
     if (staticTimer) { clearInterval(staticTimer); staticTimer = 0; }
+    humBar.style.display = mode === "static" ? "block" : "none";
     if (mode === "off") { sCan.style.display = "none"; return; }
     sCan.style.display = "block";
     sCan.style.opacity = mode === "static" ? "1" : ".07";
