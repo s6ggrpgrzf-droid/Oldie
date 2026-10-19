@@ -106,8 +106,14 @@
     color:var(--amber2); font-family:Georgia,serif; font-style:italic; font-size:17px; line-height:1.7;
     text-shadow:0 2px 12px rgba(0,0,0,.9);}
   .tv-hint[hidden]{display:none;}
-  /* CRT power on/off — only the PICTURE collapses, the glass stays put,
-     the way a real tube behaves: bright line -> dot -> dark glass. */
+  /* the tuning roll: losing vertical hold for a beat on channel change */
+  .tv-picture.tuning{animation:tuneRoll .55s cubic-bezier(.3,.7,.4,1);}
+  @keyframes tuneRoll{
+    0%{transform:translateY(0) skewX(0);}
+    35%{transform:translateY(-13%) skewX(1.4deg);}
+    70%{transform:translateY(5%) skewX(-.7deg);}
+    100%{transform:translateY(0) skewX(0);}
+  }
   .tv-picture.crt-off{animation:picOff .48s ease-in forwards;}
   .tv-picture.crt-on{animation:picOn .42s ease-out;}
   @keyframes picOff{
@@ -187,6 +193,7 @@
   }
   @media (prefers-reduced-motion:reduce){
     .tv-picture.crt-off,.tv-picture.crt-on{animation-duration:.01s;}
+    .tv-picture.tuning{animation:none;}
     video.film{animation:none;}
     .knob .ptr{transition:none;}
   }

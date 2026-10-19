@@ -79,6 +79,11 @@
     tvHint.hidden = true;
     setNoise("static");   // snow until the picture locks in
     player.classList.remove("film");
+    // the tuning roll: vertical hold wobbles, then catches
+    pic.classList.remove("tuning");
+    void pic.offsetWidth;
+    pic.classList.add("tuning");
+    setTimeout(function(){ pic.classList.remove("tuning"); }, 600);
     document.body.classList.remove("watching");   // room lights come up while tuning
     player.src = reelUrl(id);
     try {
