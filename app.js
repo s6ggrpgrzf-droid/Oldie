@@ -54,6 +54,19 @@
     return id;
   }
 
+  /* Channel digits roll like a mechanical tuner before settling. */
+  function rollChannel(finalNum) {
+    var steps = 6, i = 0;
+    var iv = setInterval(function () {
+      if (++i >= steps) {
+        clearInterval(iv);
+        chNum.textContent = String(finalNum);
+      } else {
+        chNum.textContent = String(2 + Math.floor(Math.random() * 12));
+      }
+    }, 65);
+  }
+
   /* Play a random reel, dropped in at a random point — every channel
      change is a surprise. Runs inside the tap gesture (iOS requirement). */
   function surprise() {
@@ -62,7 +75,7 @@
     if (!id) return;
     curReel = id;
     curCh = 2 + Math.floor(Math.random() * 12);
-    chNum.textContent = String(curCh);
+    rollChannel(curCh);
     tvHint.hidden = true;
     setStatic(true);   // snow until the picture locks in
     player.src = reelUrl(id);

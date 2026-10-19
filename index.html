@@ -107,6 +107,10 @@
     box-shadow:0 5px 12px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.28), inset 0 -4px 8px rgba(0,0,0,.65);
     transition:transform .1s;}
   .knob:active{transform:scale(.94);}
+  .knob::before{content:""; position:absolute; inset:0; border-radius:50%; pointer-events:none;
+    background:repeating-conic-gradient(from 0deg, rgba(0,0,0,.30) 0deg 4deg, rgba(255,255,255,.06) 4deg 8deg);
+    -webkit-mask:radial-gradient(circle at 50% 50%, transparent 68%, #000 69%);
+    mask:radial-gradient(circle at 50% 50%, transparent 68%, #000 69%);}
   .knob .ptr{position:absolute; inset:0; display:block; transition:transform .22s cubic-bezier(.3,1.4,.5,1);}
   .knob .ptr::before{content:""; position:absolute; left:50%; top:7px; width:5px; height:17px; margin-left:-2.5px;
     border-radius:3px; background:linear-gradient(180deg,#ffd9a0,#e8a33d);
