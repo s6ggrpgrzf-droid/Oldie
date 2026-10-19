@@ -78,6 +78,7 @@
     rollChannel(curCh);
     tvHint.hidden = true;
     setStatic(true);   // snow until the picture locks in
+    document.body.classList.remove("watching");   // room lights come up while tuning
     player.src = reelUrl(id);
     try {
       var pr = player.play();
@@ -103,6 +104,7 @@
   player.addEventListener("playing", function () {
     skipGuard = 0;
     setStatic(false);   // picture locked in — snow out
+    document.body.classList.add("watching");   // lights down
   });
   player.addEventListener("ended", function () {
     skipGuard = 0;
@@ -194,6 +196,7 @@
       player.pause();
       setStatic(false);
       tvHint.hidden = true;
+      document.body.classList.remove("watching");
       pic.classList.remove("crt-on"); pic.classList.add("crt-off");
       pow.classList.remove("on"); pow.classList.add("off");
       powerOn = false;
