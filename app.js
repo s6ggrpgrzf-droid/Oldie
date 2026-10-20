@@ -18,7 +18,8 @@
   var curCh = 2;             // amber window number 2..13 (flavor only)
   var chAngle = 0;
   var powerOn = true;
-  var skipGuard = 0;         // caps consecutive error-skips
+  var failed = {};           // session blacklist: reels that errored or stalled
+  var loadTimer = 0;         // watchdog: a reel that never starts gets skipped
 
   /* ---------- fine tuning: dial the picture from snowy to locked in ---------- */
   var tuneLevel = 0.65;   // 0 = snowstorm, 1 = crystal
@@ -57,15 +58,20 @@
   }
 
   function reelUrl(id) {
+    // reels.json now stores exact, verified file URLs (the old
+    // "<id>/<id>.mp4" guess 404'd for half the list). Bare identifiers
+    // still work the old way, just in case.
+    if (/^https?:\/\//.test(id)) return id;
     return "https://archive.org/download/" + id + "/" + id + ".mp4";
   }
+  function liveReels() {
+    return reels.filter(function (r) { return !failed[r]; });
+  }
   function pickReel() {
-    if (!reels.length) return null;
-    var id = curReel, guard = 0;
-    while ((id === curReel || !id) && guard++ < 12) {
-      id = reels[Math.floor(Math.random() * reels.length)];
-    }
-    return id;
+    var pool = liveReels().filter(function (r) { return r !== curReel; });
+    if (!pool.length) pool = liveReels();
+    if (!pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
   /* ---------- preload: the next commercial is already buffered ---------- */
@@ -76,11 +82,33 @@
   document.body.appendChild(preloader);
   function preloadNext(exclude) {
     if (!reels.length) return;
-    var pool = reels.filter(function (r) { return r !== exclude; });
-    if (!pool.length) pool = reels;
+    var pool = liveReels().filter(function (r) { return r !== exclude; });
+    if (!pool.length) pool = liveReels();
+    if (!pool.length) { nextReel = null; return; }
     nextReel = pool[Math.floor(Math.random() * pool.length)];
     preloader.src = reelUrl(nextReel);
     try { preloader.load(); } catch (e) {}
+  }
+
+  /* A reel that errors — or hangs on a slow server and never starts —
+     is blacklisted for the session and the next one rolls. Only when
+     every reel has failed do we give the whole list a second chance. */
+  function armWatchdog(id) {
+    if (loadTimer) clearTimeout(loadTimer);
+    loadTimer = setTimeout(function () {
+      loadTimer = 0;
+      if (powerOn && curReel === id) skipBroken();
+    }, 20000);
+  }
+  function clearWatchdog() {
+    if (loadTimer) { clearTimeout(loadTimer); loadTimer = 0; }
+  }
+  function skipBroken() {
+    clearWatchdog();
+    if (curReel) failed[curReel] = true;
+    if (nextReel && failed[nextReel]) nextReel = null;
+    if (!liveReels().length) failed = {};   // all failed once — start over
+    surprise();
   }
 
   /* Channel digits roll like a mechanical tuner before settling. */
@@ -101,7 +129,7 @@
   function surprise() {
     if (!powerOn || !reels.length) return;
     // Prefer the preloaded reel so the picture locks in fast; fall back to random.
-    var id = (nextReel && nextReel !== curReel) ? nextReel : pickReel();
+    var id = (nextReel && nextReel !== curReel && !failed[nextReel]) ? nextReel : pickReel();
     if (!id) return;
     curReel = id;
     preloadNext(id);   // buffer the one after this while it plays
@@ -116,6 +144,7 @@
     setTimeout(function(){ pic.classList.remove("tuning"); }, 600);
     document.body.classList.remove("watching");   // room lights come up while tuning
     player.src = reelUrl(id);
+    armWatchdog(id);   // if the picture never locks in, roll to the next reel
     try {
       var pr = player.play();
       if (pr && pr.catch) pr.catch(function () {});
@@ -131,20 +160,20 @@
     player.addEventListener("loadedmetadata", once);
   }
 
-  /* A reel that won't load just gets skipped — the show goes on. */
+  /* A reel that won't load just gets skipped — the show goes on.
+     (The old version gave up after 6 straight failures and left the
+     set on static forever; now a bad reel is blacklisted and skipped.) */
   player.addEventListener("error", function () {
     if (!player.src || !powerOn) return;
-    if (skipGuard++ > 6) { skipGuard = 0; return; }  // don't spin forever
-    surprise();
-  });
+    skipBroken();
+  }, true);
   player.addEventListener("playing", function () {
-    skipGuard = 0;
+    clearWatchdog();
     setNoise("grain");   // picture locked in — snow drops to a faint film grain
     player.classList.add("film");   // + the occasional projector flicker
     document.body.classList.add("watching");   // lights down
   });
   player.addEventListener("ended", function () {
-    skipGuard = 0;
     surprise();   // commercials never stop
   });
 
@@ -280,6 +309,7 @@
     thunk();
     if (powerOn) {
       player.pause();
+      clearWatchdog();
       setNoise("off");
       player.classList.remove("film");
       document.body.classList.remove("watching");
